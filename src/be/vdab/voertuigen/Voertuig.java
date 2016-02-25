@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-public abstract class Voertuig implements Comparable {
+public abstract class Voertuig implements Serializable, Comparable {
+    private static final long serialVersionUID = 1L;
     final Nummerplaat NUMMERPLAAT;
     final int zitplaatsen;
     String merk;
@@ -24,7 +25,12 @@ public abstract class Voertuig implements Comparable {
     Mens bestuurder;
     
     public Voertuig(String merk, Datum datumEersteIngebruikname, int aankoopprijs, int zitplaatsen, Mens bestuurder) throws MensException {
-        this.zitplaatsen = zitplaatsen;
+        if (zitplaatsen > 0) {
+            this.zitplaatsen = zitplaatsen;
+        } else {
+            throw new IllegalArgumentException();
+        }
+        
         setMerk(merk);
         setBestuurder(bestuurder);
         NUMMERPLAAT = DIV.INSTANCE.getNummerplaat();
@@ -33,7 +39,12 @@ public abstract class Voertuig implements Comparable {
     }
     
     public Voertuig(String merk, Datum datumEersteIngebruikname, int aankoopprijs, int zitplaatsen, Mens bestuurder, Mens... inzittenden) throws MensException {
-        this.zitplaatsen = zitplaatsen;
+        if (zitplaatsen > 0) {
+            this.zitplaatsen = zitplaatsen;
+        } else {
+            throw new IllegalArgumentException();
+        }
+        
         setMerk(merk);
         setBestuurder(bestuurder);
         NUMMERPLAAT = DIV.INSTANCE.getNummerplaat();
@@ -67,7 +78,7 @@ public abstract class Voertuig implements Comparable {
                 throw new MensException("Er is geen ruimte meer voor een extra persoon.");
         
             if (getToegestaneRijbewijzen().length == 0) {
-                throw new IllegalArgumentException();
+                throw new MensException("Deze persoon beschikt niet over het juiste rijbewijs.");
             } else {
                 this.bestuurder = bestuurder;
                 addIngezetene(bestuurder);
@@ -85,11 +96,12 @@ public abstract class Voertuig implements Comparable {
     
     protected void addIngezetene(Mens inzittende) throws MensException { 
         if (inzittenden.contains(inzittende)) {
-            
+            inzittenden.remove(inzittende);
+            inzittenden.add(inzittende);
         } else {
             if (inzittenden.size() == zitplaatsen)
                 throw new MensException("Er is geen ruimte meer voor een extra persoon.");
-            this.inzittenden.add(inzittende); 
+            inzittenden.add(inzittende); 
         }
     }
     
@@ -139,7 +151,7 @@ public abstract class Voertuig implements Comparable {
     
     @Override
     public String toString() {
-        return merk + ", " + datumEersteIngebruikname + ", " + aankoopprijs + ", " + zitplaatsen + ", " + bestuurder + ", " + inzittenden; 
+        return NUMMERPLAAT + " " + merk + " " + datumEersteIngebruikname + " " + aankoopprijs + " " + bestuurder + " " + getIngezeteneExclusiefBestuurder(); 
     }
     
     @Override 
