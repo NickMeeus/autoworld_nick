@@ -7,6 +7,7 @@ import be.vdab.util.mens.Rijbewijs;
 import be.vdab.voertuigen.div.DIV;
 import be.vdab.voertuigen.div.Nummerplaat;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -70,7 +71,7 @@ public abstract class Voertuig implements Serializable, Comparable {
     protected void setBestuurder(Mens bestuurder) throws MensException { 
         if (inzittenden.contains(bestuurder)) {
             if (getToegestaneRijbewijzen().length == 0) {
-                throw new MensException("Deze persoon beschikt niet over het juiste rijbewijs.");
+                throw new MensException("De bestuurder heeft geen geldig rijbewijs.");
             }
             this.bestuurder = bestuurder;
         } else {
@@ -78,7 +79,7 @@ public abstract class Voertuig implements Serializable, Comparable {
                 throw new MensException("Er is geen ruimte meer voor een extra persoon.");
         
             if (getToegestaneRijbewijzen().length == 0) {
-                throw new MensException("Deze persoon beschikt niet over het juiste rijbewijs.");
+                throw new MensException("De bestuurder heeft geen geldig rijbewijs.");
             } else {
                 this.bestuurder = bestuurder;
                 addIngezetene(bestuurder);
@@ -86,7 +87,11 @@ public abstract class Voertuig implements Serializable, Comparable {
         }
     }
     
-    protected Date getDatumEersteIngebruikname() { return datumEersteIngebruikname.getDatum(); }
+    protected Date getDatumEersteIngebruikname() {
+        new SimpleDateFormat("dd/MM/yyyy").format(datumEersteIngebruikname);
+        return datumEersteIngebruikname.getDatum();
+    }
+            
     
     protected void setDatumEersteIngebruikname(Datum datumEersteIngebruikname) { this.datumEersteIngebruikname = datumEersteIngebruikname; }
     
@@ -95,13 +100,17 @@ public abstract class Voertuig implements Serializable, Comparable {
     protected Set<Mens> getIngezetenen() { return inzittenden; }
     
     protected void addIngezetene(Mens inzittende) throws MensException { 
-        if (inzittenden.contains(inzittende)) {
-            inzittenden.remove(inzittende);
+        if (inzittenden.isEmpty()) {
             inzittenden.add(inzittende);
         } else {
-            if (inzittenden.size() == zitplaatsen)
-                throw new MensException("Er is geen ruimte meer voor een extra persoon.");
-            inzittenden.add(inzittende); 
+            if (inzittenden.contains(inzittende)) {
+                inzittenden.remove(inzittende);
+                inzittenden.add(inzittende);
+            } else {
+                if (inzittenden.size() == zitplaatsen)
+                    throw new MensException("Er is geen ruimte meer voor een extra persoon.");
+                inzittenden.add(inzittende); 
+            }
         }
     }
     
