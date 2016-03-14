@@ -85,7 +85,10 @@ public abstract class Voertuig implements Serializable, Comparable {
     protected void setBestuurder(Mens bestuurder) throws MensException {
 
         if (inzittenden.contains(bestuurder) || inzittenden.size() < zitplaatsen) {
-            if (CollectionUtils.containsAny(Arrays.asList(getToegestaneRijbewijzen()), Arrays.asList(bestuurder.getRijbewijs()))) {
+            List<Rijbewijs> nodig = Arrays.asList(getToegestaneRijbewijzen());
+            Rijbewijs []rb = bestuurder.getRijbewijs();
+            List<Rijbewijs> bezit = Arrays.asList(rb);
+            if (CollectionUtils.containsAny(nodig, bezit)) {
                 addIngezetene(bestuurder);
                 this.bestuurder = bestuurder;
 
@@ -98,8 +101,8 @@ public abstract class Voertuig implements Serializable, Comparable {
         }
     }
 
-    protected Date getDatumEersteIngebruikname() {
-        return datumEersteIngebruikname.getDatum();
+    protected Datum getDatumEersteIngebruikname() {
+        return datumEersteIngebruikname;
     }
 
     protected void setDatumEersteIngebruikname(Datum datumEersteIngebruikname) {
@@ -117,7 +120,8 @@ public abstract class Voertuig implements Serializable, Comparable {
     protected void addIngezetene(Mens inzittende) throws MensException {
         if (inzittenden.isEmpty()) {
             inzittenden.add(inzittende);
-        } else if (!(inzittenden.contains(inzittende))) {
+        } else 
+            if (!(inzittenden.contains(inzittende))) {
             if (inzittenden.size() == zitplaatsen) {
                 throw new MensException("Er is geen ruimte meer voor een extra persoon.");
             }
@@ -136,12 +140,7 @@ public abstract class Voertuig implements Serializable, Comparable {
     }
 
     protected boolean isIngezetene(Mens persoon) {
-        for (Mens m : inzittenden) {
-            if (persoon.equals(m)) {
-                return true;
-            }
-        }
-        return false;
+        return inzittenden.contains(persoon);
     }
 
     protected abstract Rijbewijs[] getToegestaneRijbewijzen();

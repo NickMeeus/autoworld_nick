@@ -30,13 +30,13 @@ public class Nummerplaat implements Serializable, Comparable {
         if (!(o instanceof Nummerplaat)) {
             return false;
         }
-       Nummerplaat n = (Nummerplaat) o;
-       return plaat.equals(n.getPlaat());
+        Nummerplaat n = (Nummerplaat) o;
+        return plaat.equals(n.plaat);
     }
     
     @Override
     public int compareTo(Object o) {
         Nummerplaat n = (Nummerplaat) o;
-        return plaat.compareTo(n.getPlaat());
+        return plaat.compareTo(n.plaat);
     }
 }

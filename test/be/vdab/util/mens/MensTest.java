@@ -206,7 +206,8 @@ public class MensTest {
     @Test
     public void test_toString_Mens_Met_Eén_rijbewijs(){
         String expected = "Andree(A)";
-        assertEquals(expected, MensFactorInTest.BESTUURDER_A.toString());
+        String intecht = MensFactorInTest.BESTUURDER_A.toString();
+        assertEquals(expected, intecht);
     }
 
     @Test

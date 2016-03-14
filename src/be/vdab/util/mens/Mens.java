@@ -1,84 +1,43 @@
 package be.vdab.util.mens;
 
-import java.util.EnumSet;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 
-public class Mens implements Comparable {
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+
+public class Mens implements Serializable, Comparable {
+    private static final long serialVersionUID = 1L;
+    
     String naam;
-    EnumSet<Rijbewijs> rijbewijzen;
-    boolean geenRijbewijzen = false;
+    Set<Rijbewijs> rijbewijzen = new TreeSet();
+    Collection collection = new ArrayList();
     
-    public Mens(String naam) {
+    public Mens(String naam, Rijbewijs ... r1) {
         setNaam(naam);
-        geenRijbewijzen = true;
+        rijbewijzen.addAll(Arrays.asList(r1));
     }
-    
-    public Mens(String naam, Rijbewijs rijbewijs) {
-        setNaam(naam);
-        rijbewijzen = EnumSet.of(rijbewijs);
-    }
-    
-    public Mens(String naam, Rijbewijs rijbewijs1, Rijbewijs rijbewijs2) {
-        setNaam(naam);
-        rijbewijzen = EnumSet.of(rijbewijs1, rijbewijs2);
-    }
-    
-    public Mens(String naam, Rijbewijs rijbewijs1, Rijbewijs rijbewijs2, Rijbewijs rijbewijs3) {
-        setNaam(naam);
-        rijbewijzen = EnumSet.of(rijbewijs1, rijbewijs2, rijbewijs3);
-    }
-    
-    public Mens(String naam, Rijbewijs rijbewijs1, Rijbewijs rijbewijs2, Rijbewijs rijbewijs3, Rijbewijs rijbewijs4) {
-        setNaam(naam);
-        rijbewijzen = EnumSet.of(rijbewijs1, rijbewijs2, rijbewijs3, rijbewijs4);
-    }
-    
-    public Mens(String naam, Rijbewijs rijbewijs1, Rijbewijs rijbewijs2, Rijbewijs rijbewijs3, Rijbewijs rijbewijs4, Rijbewijs rijbewijs5) {
-        setNaam(naam);
-        rijbewijzen = EnumSet.of(rijbewijs1, rijbewijs2, rijbewijs3, rijbewijs4, rijbewijs5);
-    }
-    
-    public Mens(String naam, Rijbewijs rijbewijs1, Rijbewijs rijbewijs2, Rijbewijs rijbewijs3, Rijbewijs rijbewijs4, Rijbewijs rijbewijs5, Rijbewijs rijbewijs6) {
-        setNaam(naam);
-        rijbewijzen = EnumSet.of(rijbewijs1, rijbewijs2, rijbewijs3, rijbewijs4, rijbewijs5, rijbewijs6);
-    }
-    
-    public Mens(String naam, Rijbewijs rijbewijs1, Rijbewijs rijbewijs2, Rijbewijs rijbewijs3, Rijbewijs rijbewijs4, Rijbewijs rijbewijs5, Rijbewijs rijbewijs6, Rijbewijs rijbewijs7) {
-        setNaam(naam);
-        rijbewijzen = EnumSet.of(rijbewijs1, rijbewijs2, rijbewijs3, rijbewijs4, rijbewijs5, rijbewijs6, rijbewijs7);
-    }
-    
+  
     public void setNaam(String naam) { this.naam = naam; }
-    
     public String getNaam() { return naam; }
     
-    public Object[] getRijbewijs() {
-        return rijbewijzen.toArray();
+    public Rijbewijs[] getRijbewijs() {
+        return rijbewijzen.toArray(new Rijbewijs[rijbewijzen.size()]);
     }
     
+    //"Ammelie(B, B+E, C, C+E)"
     @Override
     public String toString() {
-        if (geenRijbewijzen) return naam;
-        
         StringBuilder builder = new StringBuilder();
-        int i = 1;
-        boolean eerste = true;
-        
-        builder.append("(");
-        for (Rijbewijs r : rijbewijzen) {
-            if (i < rijbewijzen.size() && i++ != 1 && !r.toString().equals("A")) {
-                if (eerste) {
-                    builder.append(", ");
-                    eerste = false;
-                }
-                builder.append(r);
-                builder.append(", ");
-            } else {
-                builder.append(r);
-            }
+        builder.append(naam);
+        if(!rijbewijzen.isEmpty()){
+            builder.append("(").append(StringUtils.join(rijbewijzen,", ")).append(")");
         }
-        builder.append(")");
-        
-        return naam + builder.toString();
+        return builder.toString();
     }
     
     @Override
@@ -93,7 +52,7 @@ public class Mens implements Comparable {
         }
         Mens m = (Mens) o;
        
-        if (naam.equals(m.getNaam())) {
+        if (naam.equals(m.naam)) {
             if (getRijbewijs().length == m.getRijbewijs().length) {
                 String mens1[] = new String[getRijbewijs().length];
                 for (int i=0;i<getRijbewijs().length;i++) mens1[i]=getRijbewijs()[i].toString();
@@ -112,9 +71,6 @@ public class Mens implements Comparable {
     @Override
     public int compareTo(Object o) {
         Mens m = (Mens) o;
-        int i = naam.compareTo(m.getNaam());
-        if (i != 0) return i;
-        
-        return getRijbewijs().length - m.getRijbewijs().length;              
+        return naam.compareTo(m.naam);             
     }
 }
